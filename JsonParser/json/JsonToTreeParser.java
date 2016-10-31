@@ -27,6 +27,7 @@ public class JsonToTreeParser {
 			return true;
 		}
 		catch (JSONException e) {
+			e.printStackTrace();
 			return false;
 		}
 	}
