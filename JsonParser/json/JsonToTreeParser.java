@@ -13,9 +13,6 @@ public class JsonToTreeParser {
 	private static final String LABEL_IDENTATION = "---";
 	private static final String IDENTATION = "   ";
 
-	public JsonToTreeParser() {
-	}
-	
 	public Node parse(String json) {
 		root = new Node("root");
 		JSONObject jsonObject = new JSONObject(json);
