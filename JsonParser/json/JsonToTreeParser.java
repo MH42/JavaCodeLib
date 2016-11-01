@@ -1,6 +1,7 @@
 package json;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 
@@ -12,6 +13,7 @@ public class JsonToTreeParser {
 	private Node root;
 	private static final String LABEL_IDENTATION = "---";
 	private static final String IDENTATION = "   ";
+	private HashMap<String, Integer> labelMap = new HashMap<String, Integer>();
 
 	public Node parse(String json) {
 		root = new Node("root");
@@ -83,6 +85,21 @@ public class JsonToTreeParser {
 	}
 
 	private Node createNewNode(String next, Node parent) {
+		if(next == null) {
+			if(parent != null) {
+				if(labelMap.containsKey(parent.label)) {
+					labelMap.put(parent.label, labelMap.get(parent.label)+1);
+					next = parent.label+"_"+labelMap.get(parent.label);
+				}
+				else {
+					labelMap.put(parent.label, 1);
+					next = parent.label+"_1";
+				}
+			}
+			else {
+				next = "Undefined";
+			}
+		}
 		final Node node = new Node(next);
 		if(parent == null) {
 			root.children.add(node);
