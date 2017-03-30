@@ -1,14 +1,14 @@
 REFACTORING:
 ============
 
-- Schriftgröße:
+- SchriftgrÃ¶ÃŸe:
 	Window -> Preferences -> General -> Appearance: Java -> Java Editor Text Font
 	
-- Fenster groß:
+- Fenster groÃŸ:
 	Doppelklick auf Tab
 
 - Correct Indentation:
-	Strg+I (Kontextmenü -> Source -> Correct Indentation)
+	Strg+I (KontextmenÃ¼ -> Source -> Correct Indentation)
 	
 - Importe verwalten:
 	Strg+Shift+O (Source -> Organize Imports)
@@ -20,42 +20,56 @@ REFACTORING:
 	
 - Auto-Completion: System.out.println
 	Syso+Strg+Leer
-	[Überschrift für Ausgabe in jeweiliger Sortier-Methode 
+	[Ãœberschrift fÃ¼r Ausgabe in jeweiliger Sortier-Methode 
 		(z.B. System.out.println("Insertionsorted);)]
 	
 - Kopieren und Verschieben:
 	Strg+Alt+Pfeil oben/unten, Alt+Pfeil oben/unten
-	[printArray() und Überschrift kopieren und an den Anfang der Methode verschieben]
+	[printArray() und Ãœberschrift kopieren und an den Anfang der Methode verschieben]
 	
 - Auto-Completion: generell
 	Strg+Leer
 	[erzeuge neue Objekt-Instanz in Main-Klasse mit new Bubble & Strg+Leer]
 	
-- Typ-Vervollständigung mit Camel Case:
+- Typ-VervollstÃ¤ndigung mit Camel Case:
 	BubbleSort -> BS, InsertionSort -> IS
 	[erzeuge neue Objekt-Instanz in Main-Klasse mit new BS & Strg+Leer]
 	
 - Lokale Variablen extrahieren:
 	Alt+Shift+L (Refactor -> Extract Local Variable...)
-	[Main.java: lokale Variable für neue Instanz generieren lassen]
+	[Main.java: lokale Variable fÃ¼r neue Instanz generieren lassen]
 	
 - Konstante extrahieren:
 	Refactor -> Extract Constant...
-	[Main.java: Text aus Überschrift in Konstante extrahieren ("BubbleSorted") mit Alt+Shift+Pfeil & Alt+T]
+	[Main.java: Text aus Ãœberschrift in Konstante extrahieren ("BubbleSorted") mit Alt+Shift+Pfeil & Alt+T]
 	
-- Groß-/Kleinschreibung:
-	Strg+Shift+X (GroßSchreibung), Strg+Shift+Y (Kleinschreibung)
-	[Main.java: Text aus Konstante groß/klein schreiben; auch für Variablen-Namen zeigen]
+- GroÃŸ-/Kleinschreibung:
+	Strg+Shift+X (GroÃŸSchreibung), Strg+Shift+Y (Kleinschreibung)
+	[Main.java: Text aus Konstante groÃŸ/klein schreiben; auch fÃ¼r Variablen-Namen zeigen]
 	
 - Umbenennen:
 	Alt+Shift+R (Refactor -> Rename...)
-	[Variablenname ändern von Konstante mit Verändern der Groß-/Kleinschreibung]
+	[Variablenname Ã¤ndern von Konstante mit VerÃ¤ndern der GroÃŸ-/Kleinschreibung]
 	
-- Eigene Tastenkombnationen (z.B. für get-/set-Methoden)
+- Eigene Tastenkombnationen (z.B. fÃ¼r get-/set-Methoden)
 	Window -> Preferences: General -> Keys: Getter in Filter eintragen 
 	Strg+Alt+Shift+G als Binding, Editing Java Source bei When
 	Apply -> OK
-	[Feld einführen in InsertionSort.java -> getter und setter generieren lassen]
+	[Feld einfÃ¼hren in InsertionSort.java -> getter und setter generieren lassen]
+	
+
+
+FALLS ZEIT IST:
+===============
+
+?- Typ-Hierarchie anzeigen:
+	Strg+T (Navigate -> Quick Type Hierarchy)
+	[Anzeigen der neuen Typhierarchie am Beispiel von BubbleSort.java]
+	
+?- Call-/Callee-Hierarchie analysieren:
+	Strg+Alt+H (Navigate -> Open Call Hierarchy)
+	[Aufurfer von swap() zeigen; ebenso von sort() und alle weiteren Aufrufer]
+	[Am Beispiel von sort() die aufgefufenen Methoden zeigen]	
 	
 
 
@@ -70,20 +84,24 @@ DEBUGGING:
 	
 - Exception Breakpoints & Inspect:
 	Breakpoint-View -> Add J -> AIOOB (ArrayIndexOutOfBoundsException) -> Save
-	[Einfügen von ArrayIndexOutOfBoundsException über a) Exception in Console oder b) über Breakpoint-View]
-	[Laufen lassen -> Inspect (Strg+Shift+I oder Kontextmenü -> Inspect)]
-	[Code abändern -> Speichern -> Sprung zurück]
+	[EinfÃ¼gen von ArrayIndexOutOfBoundsException Ã¼ber a) Exception in Console oder b) Ã¼ber Breakpoint-View]
+	[Laufen lassen -> Inspect (Strg+Shift+I oder KontextmenÃ¼ -> Inspect)]
+	[Code abÃ¤ndern -> Speichern -> Sprung zurÃ¼ck]
 
 - Drop To Frame:
-	[manuell zu vorheriger Methode zurückspringen]
+	[manuell zu vorheriger Methode zurÃ¼ckspringen]
 	
 - Conditional Breakpoints:
 	[j == 0 in Expression if(arr[j] > arr[j + 1])]
 	[Watch arr]
 	
 	
-FALLS ZEIT IST:
-===============
+	
+	
+	
+	
+FALLS NOCH MEHR ZEIT IST:
+=========================
 
 ?- Typ-Hierarchie anzeigen:
 	Strg+T (Navigate -> Quick Type Hierarchy)
@@ -95,15 +113,13 @@ FALLS ZEIT IST:
 	[Am Beispiel von sort() die aufgefufenen Methoden zeigen]
 	
 	
-	
-
-	
+		
 ?- Methoden in Superklasse verschieben:
 	Refactor -> Pull up...
 	[beide swap()-Methoden in Superklasse verschieben lassen]
 		
 ?- Extract Class:
-	Kontextmenü -> Refactor -> Extract Class...
+	KontextmenÃ¼ -> Refactor -> Extract Class...
 	[insertionSort() -> InsertionSort; bubbleSort() -> BubbleSort]
 	
 ???- Umbenennen:
@@ -113,7 +129,7 @@ FALLS ZEIT IST:
 ?- Extract SuperClass:
 	Refactor -> Extract Superclass...
 	[sort() aus InsertionSort.java in Superklasse Sorting.java deklarieren (abstract)]
-	[sort() in BubbleSort.java einfügen lassen]
+	[sort() in BubbleSort.java einfÃ¼gen lassen]
 	
 ?- Verschieben:
 	Alt+Pfeil oben/unten
