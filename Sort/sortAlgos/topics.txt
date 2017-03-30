@@ -1,64 +1,64 @@
 REFACTORING:
 ============
 
-- Schriftgröße:
+1. Schriftgröße:
 	Window -> Preferences -> General -> Appearance: Java -> Java Editor Text Font
 	
-- Fenster groß:
+2. Fenster groß:
 	Doppelklick auf Tab
 
-- Correct Indentation:
+3. Correct Indentation:
 	Strg+I (Kontextmenü -> Source -> Correct Indentation)
 	
-- Importe verwalten:
+4. Importe verwalten:
 	Strg+Shift+O (Source -> Organize Imports)
 	
-- Methode extrahieren:
+5. Methode extrahieren:
 	Alt+Shift+M (Refactor -> Extract Method...) 
 	[erzeuge swap()]
 	[erzeuge printArray() von System.out.println(Arrays.toString(arr));]
 	
-- Auto-Completion: System.out.println
+6. Auto-Completion: System.out.println
 	Syso+Strg+Leer
 	[Überschrift für Ausgabe in jeweiliger Sortier-Methode 
-		(z.B. System.out.println("Insertionsorted);)]
+		(z.B. System.out.println("Insertionsort);)]
 	
-- Kopieren und Verschieben:
-	Strg+Alt+Pfeil oben/unten, Alt+Pfeil oben/unten
-	[printArray() und Überschrift kopieren und an den Anfang der Methode verschieben]
-	
-- Auto-Completion: generell
+7. Auto-Completion: generell
 	Strg+Leer
-	[erzeuge neue Objekt-Instanz in Main-Klasse mit new Bubble & Strg+Leer]
+	[erzeuge neue Objekt-Instanz in SortingAlgorithms-Klasse mit new Sort & Strg+Leer]
 	
-- Typ-Vervollständigung mit Camel Case:
-	BubbleSort -> BS, InsertionSort -> IS
-	[erzeuge neue Objekt-Instanz in Main-Klasse mit new BS & Strg+Leer]
+8. Typ-Vervollständigung mit Camel Case:
+	SortingAllgorithms -> SAl
+	[erzeuge neue Objekt-Instanz in SortingAlgorithms-Klasse mit new SAl & Strg+Leer]
 	
-- Lokale Variablen extrahieren:
+9. Kopieren und Verschieben:
+	Strg+Alt+Pfeil oben/unten, Alt+Pfeil oben/unten
+	[new SortingAlgorithms().insertionSort() kopieren und nach unten verschieben]
+	
+10. Lokale Variablen extrahieren:
 	Alt+Shift+L (Refactor -> Extract Local Variable...)
-	[Main.java: lokale Variable für neue Instanz generieren lassen]
+	[SortingAlgorithms.java: lokale Variable für neue Instanz generieren lassen]
 	
-- Konstante extrahieren:
+11. Konstante extrahieren:
 	Refactor -> Extract Constant...
-	[Main.java: Text aus Überschrift in Konstante extrahieren ("BubbleSorted") mit Alt+Shift+Pfeil & Alt+T]
+	[SortingAlgorithms.java: Text aus Überschrift in Konstante extrahieren ("BubbleSorted") mit Alt+Shift+Pfeil & Alt+T]
 	
-- Groß-/Kleinschreibung:
+12. Groß-/Kleinschreibung:
 	Strg+Shift+X (GroßSchreibung), Strg+Shift+Y (Kleinschreibung)
-	[Main.java: Text aus Konstante groß/klein schreiben; auch für Variablen-Namen zeigen]
+	[SortingAlgorithms.java: Konstante in Feld: Text aus Konstante klein schreiben; auch für Variablen-Namen zeigen]
 	
-- Umbenennen:
+13. Umbenennen:
 	Alt+Shift+R (Refactor -> Rename...)
 	[Variablenname ändern von Konstante mit Verändern der Groß-/Kleinschreibung]
 	
-- Eigene Tastenkombnationen (z.B. für get-/set-Methoden)
+14. Eigene Tastenkombnationen (z.B. für get-/set-Methoden)
 	Window -> Preferences: General -> Keys: Getter in Filter eintragen 
 	Strg+Alt+Shift+G als Binding, Editing Java Source bei When
 	Apply -> OK
 	[Feld einführen in InsertionSort.java -> getter und setter generieren lassen]
 	
-
-
+	
+	
 FALLS ZEIT IST:
 ===============
 
@@ -70,34 +70,34 @@ FALLS ZEIT IST:
 	Strg+Alt+H (Navigate -> Open Call Hierarchy)
 	[Aufurfer von swap() zeigen; ebenso von sort() und alle weiteren Aufrufer]
 	[Am Beispiel von sort() die aufgefufenen Methoden zeigen]	
-	
+
 
 
 DEBUGGING:
 ==========
 	
-- Ein-/Auskommentieren:
-	Strg+/ (Source -> Toggle Comment)
+15. Ein-/Auskommentieren: & Löschen
+	Strg+/ (Source -> Toggle Comment) 	Strg+D
 	
-- Breakpoints:
+16. Breakpoints:
 	[Breakpoint setzen an Stelle wo Exception fliegt -> Debugger starten und in jedem Schleifen-Durchlauf anhalten -> langwierig]
 	
-- Exception Breakpoints & Inspect:
+17. Exception Breakpoints & Inspect:
 	Breakpoint-View -> Add J -> AIOOB (ArrayIndexOutOfBoundsException) -> Save
 	[Einfügen von ArrayIndexOutOfBoundsException über a) Exception in Console oder b) über Breakpoint-View]
 	[Laufen lassen -> Inspect (Strg+Shift+I oder Kontextmenü -> Inspect)]
 	[Code abändern -> Speichern -> Sprung zurück]
 
-- Drop To Frame:
+18. Drop To Frame:
 	[manuell zu vorheriger Methode zurückspringen]
 	
-- Conditional Breakpoints:
+19. Conditional Breakpoints:
 	[j == 0 in Expression if(arr[j] > arr[j + 1])]
 	[Watch arr]
 	
 	
 	
-	
+
 	
 	
 FALLS NOCH MEHR ZEIT IST:
@@ -113,7 +113,7 @@ FALLS NOCH MEHR ZEIT IST:
 	[Am Beispiel von sort() die aufgefufenen Methoden zeigen]
 	
 	
-		
+	
 ?- Methoden in Superklasse verschieben:
 	Refactor -> Pull up...
 	[beide swap()-Methoden in Superklasse verschieben lassen]
