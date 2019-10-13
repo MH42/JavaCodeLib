@@ -303,6 +303,14 @@ public class Dir {
 			return false;
 	}
 	
+	public boolean searchFileContent(String path, String searchString) {
+		return false;
+	}
+	
+	public boolean replaceFileContent(String path, String searchString, String replacementString) {
+		return false;
+	}
+	
 
 	/**
 	 * @param args
