@@ -29,7 +29,7 @@ public class Dir {
 	}
 	/**
 	 * Creates a dir-object with a filter that is applied to all operations that are offered by Dir unless it is overwritten by {@link #setNewExcludedExtensions(List)}.
-	 * @param excludedExtenions
+	 * @param excludedExtenions The file extensions that have to be excluded.
 	 */
 	public Dir(List<String> excludedExtenions) {
 		this.filter = new Filter(excludedExtenions);
@@ -87,7 +87,7 @@ public class Dir {
 	}
 	
 	/**
-	 * Copies a directory source and all its files and directories into a target directory. 
+	 * Copies a directory source and all its files and directories into a target directory (unless the filter applies). 
 	 * If the target directory does not exist, it will be created with all the possibly necessary parent directories.
 	 * @param source the directory to copy
 	 * @param target the target directory
@@ -221,7 +221,7 @@ public class Dir {
 	}
 	
 	/**
-	 * Moves a directory source and all its files and directories into a target directory. 
+	 * Moves a directory source and all its files and directories into a target directory (unless the filter applies). 
 	 * If the target directory does not exist, it will be created with all the possibly necessary parent directories.
 	 * @param source the directory to move
 	 * @param target the target directory
@@ -309,7 +309,7 @@ public class Dir {
 	 */
 	public static void main(String[] args) {
 		
-		try {
+//		try {
 			// Create dummy dirs and dummy files with text:
 			String source = "path-to-source-dir";
 			// Copy dirs:
@@ -321,10 +321,10 @@ public class Dir {
 			dir.move(target, targetMoved);
 			// Delete dirs:
 			dir.delete(source);
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+//		} catch (IOException e) {
+//			// TODO Auto-generated catch block
+//			e.printStackTrace();
+//		}
 	}
 
 }
