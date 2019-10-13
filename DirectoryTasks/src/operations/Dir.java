@@ -12,9 +12,11 @@ import java.nio.file.SimpleFileVisitor;
 import java.nio.file.attribute.BasicFileAttributes;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.EnumSet;
 import java.util.List;
+import java.util.stream.Stream;
 
 /**
  * @author Matthias
@@ -110,7 +112,7 @@ public class Dir {
 				public FileVisitResult preVisitDirectory(Path dir,
 						BasicFileAttributes attrs) throws IOException {
 					String delta = (sourcePath.relativize(dir)).toString();
-					Path currentTargetPath = Paths.get(target+File.separator+delta);
+					Path currentTargetPath = Paths.get(target + File.separator + delta);
 					if(!Files.exists(currentTargetPath))
 						Files.copy(dir, currentTargetPath);
 					return FileVisitResult.CONTINUE	;
@@ -124,7 +126,7 @@ public class Dir {
 						BasicFileAttributes attrs) throws IOException {
 					if(!filter.applies(file)) {
 						String delta = (sourcePath.relativize(file)).toString();
-						Path currentTargetPath = Paths.get(target+File.separator+delta);
+						Path currentTargetPath = Paths.get(target + File.separator + delta);
 						Files.copy(file, currentTargetPath);
 					}
 					return FileVisitResult.CONTINUE;
@@ -244,7 +246,7 @@ public class Dir {
 				public FileVisitResult preVisitDirectory(Path dir,
 						BasicFileAttributes attrs) throws IOException {
 					String delta = (sourcePath.relativize(dir)).toString();
-					Path currentTargetPath = Paths.get(target+File.separator+delta);
+					Path currentTargetPath = Paths.get(target + File.separator + delta);
 					if(!filter.applies(dir) && !Files.exists(currentTargetPath))
 						Files.createDirectories(currentTargetPath);
 					return FileVisitResult.CONTINUE	;
@@ -258,7 +260,7 @@ public class Dir {
 						BasicFileAttributes attrs) throws IOException {
 					if(!filter.applies(file)) {
 						String delta = (sourcePath.relativize(file)).toString();
-						Path currentTargetPath = Paths.get(target+File.separator+delta);
+						Path currentTargetPath = Paths.get(target + File.separator + delta);
 						Files.move(file, currentTargetPath);
 					}
 					else
@@ -303,12 +305,96 @@ public class Dir {
 			return false;
 	}
 	
-	public boolean searchFileContent(String path, String searchString) {
-		return false;
+	public boolean searchFileContent(String path, String searchString, boolean ignoreCase) {
+		failures.clear();
+		final Path sourcePath = Paths.get(path);
+		try {
+			Files.walkFileTree(sourcePath, EnumSet.of(FileVisitOption.FOLLOW_LINKS), Integer.MAX_VALUE, new SimpleFileVisitor<Path>() {
+				
+				/* (non-Javadoc)
+				 * @see java.nio.file.SimpleFileVisitor#visitFile(java.lang.Object, java.nio.file.attribute.BasicFileAttributes)
+				 */
+				@Override
+				public FileVisitResult visitFile(Path file,
+						BasicFileAttributes attrs) {
+					FileContent fileContent = new FileContent();
+					if(!file.toFile().isDirectory() && !filter.applies(file)) {
+						fileContent.search(file, searchString, ignoreCase);
+					}
+					return FileVisitResult.CONTINUE;
+				}
+				
+				/* (non-Javadoc)
+				 * @see java.nio.file.SimpleFileVisitor#visitFileFailed(java.lang.Object, java.io.IOException)
+				 */
+				@Override
+				public FileVisitResult visitFileFailed(Path file,
+						IOException exc) {
+					failures.add(file);
+					// return super.visitFileFailed(file, exc);
+					return FileVisitResult.CONTINUE;
+				}
+			});
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		finally {
+			if(!failures.isEmpty()) {
+				System.out.println("Failed to find the following paths:");
+				for(Path p : failures)
+					System.out.println(p.toString());
+			} 
+		}
+		if(failures.isEmpty())
+			return true;
+		else
+			return false;
 	}
 	
-	public boolean replaceFileContent(String path, String searchString, String replacementString) {
-		return false;
+	public boolean replaceFileContent(String path, String searchString, String replacementString, boolean ignoreCase) {
+		failures.clear();
+		final Path sourcePath = Paths.get(path);
+		try {
+			Files.walkFileTree(sourcePath, EnumSet.of(FileVisitOption.FOLLOW_LINKS), Integer.MAX_VALUE, new SimpleFileVisitor<Path>() {
+
+				/* (non-Javadoc)
+				 * @see java.nio.file.SimpleFileVisitor#visitFile(java.lang.Object, java.nio.file.attribute.BasicFileAttributes)
+				 */
+				@Override
+				public FileVisitResult visitFile(Path file,
+						BasicFileAttributes attrs) {
+					FileContent fileContent = new FileContent();
+					if(!file.toFile().isDirectory() && !filter.applies(file)) {
+						fileContent.replace(file, searchString, replacementString, ignoreCase);
+					}
+					return FileVisitResult.CONTINUE;
+				}
+				
+				/* (non-Javadoc)
+				 * @see java.nio.file.SimpleFileVisitor#visitFileFailed(java.lang.Object, java.io.IOException)
+				 */
+				@Override
+				public FileVisitResult visitFileFailed(Path file,
+						IOException exc) {
+					failures.add(file);
+					// return super.visitFileFailed(file, exc);
+					return FileVisitResult.CONTINUE;
+				}
+			});
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		finally {
+			if(!failures.isEmpty()) {
+				System.out.println("Failed to copy the following paths:");
+				for(Path p : failures)
+					System.out.println(p.toString());
+			} 
+		}
+		if(failures.isEmpty())
+			return true;
+		else
+			return false;
 	}
 	
 
@@ -333,6 +419,13 @@ public class Dir {
 //			// TODO Auto-generated catch block
 //			e.printStackTrace();
 //		}
+		
+		String source2 = "path-to-source-dir";
+		Dir dir2 = new Dir(Arrays.asList(".txt"));
+		boolean found = dir2.searchFileContent(source2, "lebensraum", true);
+		System.out.println("Found? " + found);
+		boolean replaced = dir2.replaceFileContent(source2, "lebensraum", "world", true);
+		System.out.println("Replaced? " + replaced);
 	}
 
 }
