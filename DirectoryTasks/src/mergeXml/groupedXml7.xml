@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?><r>
+	<groupNode xkey="" ykey=""><a key="1">
+		<a key="11">
+			A
+			<x>X</x>
+			<y>Y</y>
+			<z>Z</z>
+		</a>
+		<b key="12">B</b>
+		<c key="13">C</c>
+	</a></groupNode>
+	<groupNode_X xkey="X" ykey=""><a key="2">
+		<x key="21">X</x>
+	</a></groupNode_X>
+	<groupNode_X_Y xkey="X" ykey="Y"><a key="3">
+		<x key="31">X</x>
+		<y key="32">Y</y>
+	</a></groupNode_X_Y>
+</r>

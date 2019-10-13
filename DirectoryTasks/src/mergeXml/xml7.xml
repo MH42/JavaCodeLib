@@ -1,0 +1,19 @@
+<r>
+	<a key="1">
+		<a key="11">
+			A
+			<x>X</x>
+			<y>Y</y>
+			<z>Z</z>
+		</a>
+		<b key="12">B</b>
+		<c key="13">C</c>
+	</a>
+	<a key="2">
+		<x key="21">X</x>
+	</a>
+	<a key="3">
+		<x key="31">X</x>
+		<y key="32">Y</y>
+	</a>
+</r>

@@ -1,0 +1,25 @@
+<r>
+	<a key="1">
+		<a key="11">
+			A
+			<x>X</x>
+			<y>Y</y>
+			<z>Z</z>
+		</a>
+		<b key="12">B</b>
+		<c key="13">C</c>
+	<a key="101">
+			<w key="1101">W</w>
+			<e key="1102">E</e>
+		</a><a key="102">
+			T
+			<z key="1102">Z</z>
+		</a></a>
+	<a key="2">
+		<x key="21">X</x>
+	</a>
+	<a key="3">
+		<x key="31">X</x>
+		<y key="32">Y</y>
+	</a>
+</r>
