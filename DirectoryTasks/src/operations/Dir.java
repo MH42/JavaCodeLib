@@ -1,7 +1,8 @@
 package operations;
 
+import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileWriter;
+import java.io.FileReader;
 import java.io.IOException;
 import java.nio.file.FileVisitOption;
 import java.nio.file.FileVisitResult;
@@ -10,19 +11,18 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.SimpleFileVisitor;
 import java.nio.file.attribute.BasicFileAttributes;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Date;
 import java.util.EnumSet;
 import java.util.List;
-import java.util.stream.Stream;
 
 /**
  * @author Matthias
+ * 10.08.2016
  */
 
 public class Dir {
+	private List<Path> successes = new ArrayList<Path>();
 	private List<Path> failures = new ArrayList<Path>();
 	private Filter filter;
 	
@@ -98,6 +98,7 @@ public class Dir {
 	 * @throws IOException 
 	 */
 	public boolean copyFileTree(String source, final String target) throws IOException {
+		successes.clear();
 		failures.clear();
 		final Path sourcePath = Paths.get(source);
 		final Path targetPath = Paths.get(target);
@@ -113,8 +114,10 @@ public class Dir {
 						BasicFileAttributes attrs) throws IOException {
 					String delta = (sourcePath.relativize(dir)).toString();
 					Path currentTargetPath = Paths.get(target + File.separator + delta);
-					if(!Files.exists(currentTargetPath))
+					if(!Files.exists(currentTargetPath)) {
 						Files.copy(dir, currentTargetPath);
+						successes.add(dir);
+					}
 					return FileVisitResult.CONTINUE	;
 				}
 
@@ -128,6 +131,7 @@ public class Dir {
 						String delta = (sourcePath.relativize(file)).toString();
 						Path currentTargetPath = Paths.get(target + File.separator + delta);
 						Files.copy(file, currentTargetPath);
+						successes.add(file);
 					}
 					return FileVisitResult.CONTINUE;
 				}
@@ -147,8 +151,13 @@ public class Dir {
 			throw e;
 		}
 		finally {
+			if(!successes.isEmpty()) {
+				System.out.println("Succeeded to copy the following paths into the target path " + target + ":");
+				for(Path p : successes)
+					System.out.println(p.toString());
+			}
 			if(!failures.isEmpty()) {
-				System.out.println("Failed to copy the following paths:");
+				System.out.println("Failed to copy the following paths into the target path " + target + ":");
 				for(Path p : failures)
 					System.out.println(p.toString());
 			}
@@ -167,6 +176,7 @@ public class Dir {
 	 * @throws IOException 
 	 */
 	public boolean deleteFileTree(String target) throws IOException {
+		successes.clear();
 		failures.clear();
 		final Path targetPath = Paths.get(target);
 		try {
@@ -181,6 +191,7 @@ public class Dir {
 				public FileVisitResult visitFile(Path file,
 						BasicFileAttributes attrs) throws IOException {
 					Files.delete(file);
+					successes.add(file);
 					return FileVisitResult.CONTINUE;
 				}
 
@@ -191,6 +202,7 @@ public class Dir {
 				public FileVisitResult postVisitDirectory(Path dir,
 						IOException exc) throws IOException {
 					Files.delete(dir);
+					successes.add(dir);
 					return FileVisitResult.CONTINUE;
 				}
 
@@ -210,6 +222,11 @@ public class Dir {
 			throw e;
 		}
 		finally {
+			if(!successes.isEmpty()) {
+				System.out.println("Succeeded	 to delete the following paths:");
+				for(Path p : successes)
+					System.out.println(p.toString());
+			}
 			if(!failures.isEmpty()) {
 				System.out.println("Failed to delete the following paths:");
 				for(Path p : failures)
@@ -232,6 +249,7 @@ public class Dir {
 	 * @throws IOException 
 	 */
 	public boolean moveFileTree(String source, final String target) throws IOException {
+		successes.clear();
 		failures.clear();
 		final Path sourcePath = Paths.get(source);
 		final Path targetPath = Paths.get(target);
@@ -247,8 +265,10 @@ public class Dir {
 						BasicFileAttributes attrs) throws IOException {
 					String delta = (sourcePath.relativize(dir)).toString();
 					Path currentTargetPath = Paths.get(target + File.separator + delta);
-					if(!filter.applies(dir) && !Files.exists(currentTargetPath))
+					if(!filter.applies(dir) && !Files.exists(currentTargetPath)) {
 						Files.createDirectories(currentTargetPath);
+						successes.add(dir);
+					}
 					return FileVisitResult.CONTINUE	;
 				}
 
@@ -262,9 +282,10 @@ public class Dir {
 						String delta = (sourcePath.relativize(file)).toString();
 						Path currentTargetPath = Paths.get(target + File.separator + delta);
 						Files.move(file, currentTargetPath);
+						successes.add(file);
 					}
-					else
-						Files.delete(file);
+//					else 
+//						Files.delete(file);
 					return FileVisitResult.CONTINUE;
 				}
 				
@@ -275,6 +296,7 @@ public class Dir {
 				public FileVisitResult postVisitDirectory(Path dir,
 						IOException exc) throws IOException {
 					Files.delete(dir);
+					successes.add(dir);
 					return FileVisitResult.CONTINUE;
 				}
 
@@ -293,8 +315,13 @@ public class Dir {
 			throw e;
 		}
 		finally {
+			if(!successes.isEmpty()) {
+				System.out.println("Succeeded to move the following paths into the target path " + target + ":");
+				for(Path p : successes)
+					System.out.println(p.toString());
+			}
 			if(!failures.isEmpty()) {
-				System.out.println("Failed to move the following paths:");
+				System.out.println("Failed to move the following paths into the target path " + target + ":");
 				for(Path p : failures)
 					System.out.println(p.toString());
 			}
@@ -305,7 +332,16 @@ public class Dir {
 			return false;
 	}
 	
-	public boolean searchFileContent(String path, String searchString, boolean ignoreCase) {
+	/**
+	 * Searches for a search string in the given path and optionally in all its subdirectories. Reports on the number of matches.
+	 * @param path The path where the search starts
+	 * @param searchString The string to search for
+	 * @param ignoreCase <tt>true</tt> if the search is case sensitive and considers exact matches only; <tt>false</tt> otherwise
+	 * @param skipSubDirectories <tt>true</tt> if the search must consider only the given path; <tt>false</tt> otherwise
+	 * @return The number of matches
+	 */
+	public int searchFileContent(String path, String searchString, boolean ignoreCase, boolean skipSubDirectories) {
+		successes.clear();
 		failures.clear();
 		final Path sourcePath = Paths.get(path);
 		try {
@@ -319,9 +355,14 @@ public class Dir {
 						BasicFileAttributes attrs) {
 					FileContent fileContent = new FileContent();
 					if(!file.toFile().isDirectory() && !filter.applies(file)) {
-						fileContent.search(file, searchString, ignoreCase);
+						if(fileContent.search(file, searchString, ignoreCase)) {
+							successes.add(file);
+						}
 					}
-					return FileVisitResult.CONTINUE;
+					if(!skipSubDirectories)
+						return FileVisitResult.CONTINUE;
+					else 
+						return FileVisitResult.SKIP_SUBTREE;
 				}
 				
 				/* (non-Javadoc)
@@ -332,26 +373,42 @@ public class Dir {
 						IOException exc) {
 					failures.add(file);
 					// return super.visitFileFailed(file, exc);
-					return FileVisitResult.CONTINUE;
+					if(!skipSubDirectories)
+						return FileVisitResult.CONTINUE;
+					else 
+						return FileVisitResult.SKIP_SUBTREE;
 				}
 			});
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
 		finally {
+			if(!successes.isEmpty()) {
+				System.out.println("Succeeded to search in the following paths:");
+				for(Path p : successes)
+					System.out.println(p.toString());
+				System.out.println("Matches in total: " + successes.size());
+			} 
 			if(!failures.isEmpty()) {
-				System.out.println("Failed to find the following paths:");
+				System.out.println("Failed to search in the following paths:");
 				for(Path p : failures)
 					System.out.println(p.toString());
 			} 
 		}
-		if(failures.isEmpty())
-			return true;
-		else
-			return false;
+		return successes.size();
 	}
 	
-	public boolean replaceFileContent(String path, String searchString, String replacementString, boolean ignoreCase) {
+	/**
+	 * Replaces a search string in the given path by another string. Optionally considers all its subdirectories.
+	 * @param path The path where the search starts
+	 * @param searchString The string to search for
+	 * @param replacementString The replacement string
+	 * @param ignoreCase <tt>true</tt> if the search is case sensitive and considers exact matches only; <tt>false</tt> otherwise
+	 * @param skipSubDirectories <tt>true</tt> if the search must consider only the given path; <tt>false</tt> otherwise
+	 * @return The number of replacements
+	 */
+	public int replaceFileContent(String path, String searchString, String replacementString, boolean ignoreCase, boolean skipSubDirectories) {
+		successes.clear();
 		failures.clear();
 		final Path sourcePath = Paths.get(path);
 		try {
@@ -366,8 +423,12 @@ public class Dir {
 					FileContent fileContent = new FileContent();
 					if(!file.toFile().isDirectory() && !filter.applies(file)) {
 						fileContent.replace(file, searchString, replacementString, ignoreCase);
+						successes.add(file);
 					}
-					return FileVisitResult.CONTINUE;
+					if(!skipSubDirectories)
+						return FileVisitResult.CONTINUE;
+					else 
+						return FileVisitResult.SKIP_SUBTREE;
 				}
 				
 				/* (non-Javadoc)
@@ -378,25 +439,73 @@ public class Dir {
 						IOException exc) {
 					failures.add(file);
 					// return super.visitFileFailed(file, exc);
-					return FileVisitResult.CONTINUE;
+					if(!skipSubDirectories)
+						return FileVisitResult.CONTINUE;
+					else 
+						return FileVisitResult.SKIP_SUBTREE;
 				}
 			});
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
 		finally {
+			if(!successes.isEmpty()) {
+				System.out.println("Succeeded to replace " + searchString + " by " + replacementString + " in the following paths:");
+				for(Path p : successes)
+					System.out.println(p.toString());
+				System.out.println("Replacements in total: " + successes.size());
+			} 
 			if(!failures.isEmpty()) {
-				System.out.println("Failed to copy the following paths:");
+				System.out.println("Failed to replace " + searchString + " by " + replacementString + " in the following paths:");
 				for(Path p : failures)
 					System.out.println(p.toString());
 			} 
 		}
-		if(failures.isEmpty())
-			return true;
-		else
-			return false;
+		return successes.size();
 	}
 	
+	
+	/**
+	 * Reads a file with its content.
+	 * @param path The path to the file
+	 * @return The file content as {@link String}
+	 * @throws IOException In case of errors during reading the given file.
+	 */
+	public String readFileIntoString(String path) {
+		try(BufferedReader bufferedReader = new BufferedReader(new FileReader(new File(path)));) {
+			StringBuffer fileContent = new StringBuffer();
+			String line = "";
+			while((line = bufferedReader.readLine()) != null) {
+				fileContent.append(line + "\n");
+			}
+			return fileContent.toString();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			return "";
+		}
+	}
+	
+	/**
+	 * Reads a file with its content.
+	 * @param path The path to the file
+	 * @return The file content as {@link List}
+	 * @throws IOException In case of errors during reading the given file.
+	 */
+	public List<String> readFileIntoList(String path) {
+		try(BufferedReader bufferedReader = new BufferedReader(new FileReader(new File(path)));) {
+			List<String> fileContentList = new ArrayList<>();
+			String line = "";
+			while((line = bufferedReader.readLine()) != null) {
+				fileContentList.add(line);
+			}
+			return fileContentList;
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			return new ArrayList<>();
+		}
+	}
 
 	/**
 	 * @param args
@@ -411,10 +520,13 @@ public class Dir {
 			Dir dir = new Dir();
 			dir.copy(source, target);
 			// Move dirs:
-			String targetMoved = "path-to-target-move";
+			String targetMoved = "path-to-target-dir";
 			dir.move(target, targetMoved);
 			// Delete dirs:
 			dir.delete(source);
+			// Copy dirs:
+//			String target = "path-to-target-dir";
+			dir.copy(targetMoved, source);
 //		} catch (IOException e) {
 //			// TODO Auto-generated catch block
 //			e.printStackTrace();
@@ -422,10 +534,17 @@ public class Dir {
 		
 		String source2 = "path-to-source-dir";
 		Dir dir2 = new Dir(Arrays.asList(".txt"));
-		boolean found = dir2.searchFileContent(source2, "lebensraum", true);
-		System.out.println("Found? " + found);
-		boolean replaced = dir2.replaceFileContent(source2, "lebensraum", "world", true);
-		System.out.println("Replaced? " + replaced);
+		int matches = dir2.searchFileContent(source2, "lebensraum", true, false);
+		System.out.println("#Matches? " + matches);
+		int replacements = dir2.replaceFileContent(source2, "lebensraum", "world", true, false);
+		System.out.println("#Replacements? " + replacements);
+		
+		dir.copy(source2, (source2 + "abc"));
+		
+		List<String> fileList = dir2.readFileIntoList("path-to-source-dir");
+		for(String f: fileList) {
+			dir2.copy(f, (f + "def"));
+		}
 	}
 
 }

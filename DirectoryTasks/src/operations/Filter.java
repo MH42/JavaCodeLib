@@ -5,7 +5,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
+ * File Extension Filter in order to ignore specific file types.
+ * 
  * @author Matthias
+ * 10.08.2016
  */
 
 public class Filter {
