@@ -7,6 +7,12 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
+/**
+ * 
+ * @author Matthias
+ * 10.08.2016
+ */
+
 public class FileContent {
 	public boolean search(Path filePath, String searchString, boolean ignoreCase) {
 		Charset charset = StandardCharsets.UTF_8;
@@ -56,7 +62,8 @@ public class FileContent {
 		
 //		try {
 			// Create dummy dirs and dummy files with text:
-			String source = "path-to-source-dir";
+//			String source = "path-to-source-dir";
+			String source = "D:\\Matthias\\Projekte\\Jaguar.java";
 			boolean found = new FileContent().search(Paths.get(source), "lebensraum", true);
 			System.out.println("Found? " + found);
 			boolean replaced = new FileContent().replace(Paths.get(source), "lebensraum", "world", true);
