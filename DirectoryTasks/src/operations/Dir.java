@@ -15,6 +15,9 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.EnumSet;
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 /**
  * @author Matthias
@@ -333,6 +336,61 @@ public class Dir {
 	}
 	
 	/**
+	 * Collect all files contained in a directory (recursively). {@link Files#walk(Path, int, FileVisitOption...)} traverses 
+	 * the file tree <em>depth-first</em>. If <tt>maxDepth</tt> is equals <tt>-1</tt> or <tt>Integer.MAX_VALUE</tt>, the whole tree is traversed.
+	 * @param source The directory whose files need to be listed
+	 * @param maxDepth Integer to define the levels that have to be traversed
+	 * @see {@link Files#walk(Path, int, FileVisitOption...)}
+	 * @return List of files that reside in the given directory
+	 * @throws IOException 
+	 */
+	public List<String> listDirectoryContent(String source, int maxDepth) throws IOException {
+		return listDirectoryContent(source, maxDepth, new ArrayList<String>());
+	}
+	
+	/**
+	 * Collect all files contained in a directory (recursively). {@link Files#walk(Path, int, FileVisitOption...)} traverses 
+	 * the file tree <em>depth-first</em>. If <tt>maxDepth</tt> is equals <tt>-1</tt> or <tt>Integer.MAX_VALUE</tt>, the whole tree is traversed.
+	 * @param source The directory whose files need to be listed
+	 * @param maxDepth Integer to define the levels that have to be traversed
+	 * @param pathToBlackListFile Path to a file that contains a list of directories or files that have to be ignored
+	 * @see {@link Files#walk(Path, int, FileVisitOption...)}
+	 * @return List of files that reside in the given directory
+	 * @throws IOException 
+	 */
+	public List<String> listDirectoryContent(String source, int maxDepth, String pathToBlackListFile) throws IOException {
+		List<String> directoryBlackList = this.readFileIntoList(pathToBlackListFile);
+		return listDirectoryContent(source, maxDepth, directoryBlackList);
+	}
+	
+	/**
+	 * Collect all files contained in a directory (recursively). {@link Files#walk(Path, int, FileVisitOption...)} traverses 
+	 * the file tree <em>depth-first</em>. If <tt>maxDepth</tt> is equals <tt>-1</tt> or <tt>Integer.MAX_VALUE</tt>, the whole tree is traversed.
+	 * @param source The directory whose files need to be listed
+	 * @param maxDepth Integer to define the levels that have to be traversed
+	 * @param blackList List of directories or files that have to be ignored
+	 * @see {@link Files#walk(Path, int, FileVisitOption...)}
+	 * @return List of files that reside in the given directory
+	 * @throws IOException 
+	 */
+	public List<String> listDirectoryContent(String source, int maxDepth, List<String> blackList) {
+		List<String> result = new ArrayList<>();
+		int level = Integer.MAX_VALUE;
+		if (maxDepth != -1 && maxDepth != Integer.MAX_VALUE)
+			level = maxDepth;
+		try (Stream<Path> walk = Files.walk(Paths.get(source), level)) {
+			result = walk.filter(Files::isRegularFile).map(x -> x.toString()).filter(f -> !blackList.stream().anyMatch(l -> Paths.get(f).startsWith(Paths.get(l)))).collect(Collectors.toList());
+
+			String sep = File.separator;
+			result.forEach(r -> System.out.println(r.replaceAll(Matcher.quoteReplacement(sep), "/")));
+//			result.forEach(System.out::println);
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		return result;
+	}
+	
+	/**
 	 * Searches for a search string in the given path and optionally in all its subdirectories. Reports on the number of matches.
 	 * @param path The path where the search starts
 	 * @param searchString The string to search for
@@ -506,11 +564,24 @@ public class Dir {
 			return new ArrayList<>();
 		}
 	}
+	
+	
+	public static void main(String[] args) {
+		String path = "path-to-source-dir";
+		Dir dir = new Dir();
+		try {
+//			dir.listDirectoryContent(path, -1);
+			dir.listDirectoryContent(path, -1, "resources/blackList.txt");
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
 
 	/**
 	 * @param args
 	 */
-	public static void main(String[] args) {
+	public static void maina(String[] args) {
 		
 //		try {
 			// Create dummy dirs and dummy files with text:
@@ -520,7 +591,7 @@ public class Dir {
 			Dir dir = new Dir();
 			dir.copy(source, target);
 			// Move dirs:
-			String targetMoved = "path-to-target-dir";
+			String targetMoved = "path-to-targetMoved";
 			dir.move(target, targetMoved);
 			// Delete dirs:
 			dir.delete(source);
@@ -541,7 +612,7 @@ public class Dir {
 		
 		dir.copy(source2, (source2 + "abc"));
 		
-		List<String> fileList = dir2.readFileIntoList("path-to-source-dir");
+		List<String> fileList = dir2.readFileIntoList("copy-list.txt");
 		for(String f: fileList) {
 			dir2.copy(f, (f + "def"));
 		}
