@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?><root>
+	<Employees>
+		<Employee>
+			<name>Pankaj<test1/></name>
+			<age>29</age>
+			<role>Java Developer</role>
+			<gender>Male</gender>
+		<test/></Employee>
+		<Employee>
+			<name>Lisa<test1/></name>
+			<age>35</age>
+			<role>CSS Developer</role>
+			<gender>Female</gender>
+		<test/></Employee>
+	</Employees>
+</root>
