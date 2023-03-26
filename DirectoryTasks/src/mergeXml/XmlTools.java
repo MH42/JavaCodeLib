@@ -337,7 +337,7 @@ public class XmlTools {
 	
 	
 	public Node specialMove() throws SAXException, IOException, ParserConfigurationException, XPathExpressionException, TransformerException {
-		Document xml7 = this.parse("D:\\\\Matthias\\\\Projekte\\\\Java\\\\JavaCodeLib\\\\DirectoryTasks\\\\src\\\\mergeXml\\\\xml7.xml");
+		Document xml7 = this.parse("path-to-file");
 		// find all relevant nodes
 		XPath xpath = XPathFactory.newInstance().newXPath();
 		XPathExpression expr = xpath.compile("/r/a");
@@ -402,7 +402,7 @@ public class XmlTools {
 	}
 	
 	public void manipulateXmlMultiThreaded() throws SAXException, IOException, ParserConfigurationException, XPathExpressionException, TransformerException, InterruptedException {
-		Document xml = this.parse("D:\\\\Matthias\\\\Projekte\\\\Java\\\\JavaCodeLib\\\\DirectoryTasks\\\\src\\\\mergeXml\\\\partsupp.xml");
+		Document xml = this.parse("path-to-file");
 		// find all relevant nodes
 		XPath xpath = XPathFactory.newInstance().newXPath();
 		XPathExpression expr = xpath.compile("//*[not(*)]");
