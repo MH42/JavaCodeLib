@@ -72,17 +72,17 @@ class XmlToolsTest {
 	}
 
 	@Test
-	void testMerge34() throws TransformerException, SAXException, IOException, ParserConfigurationException {
-		Document xml3 = xmlTools.parse(DIR_PATH + "xml3.xml");
-		Document xml4 = xmlTools.parse(DIR_PATH + "xml4.xml");
-		Document merged34 = xmlTools.parse(DIR_PATH + "merged34.xml");
+	void testMerge1b2b() throws TransformerException, SAXException, IOException, ParserConfigurationException {
+		Document xml1b = xmlTools.parse(DIR_PATH + "xml1b.xml");
+		Document xml2b = xmlTools.parse(DIR_PATH + "xml2b.xml");
+		Document merged34 = xmlTools.parse(DIR_PATH + "merged1b2b.xml");
 
 		Element mergedDoc = merged34.getDocumentElement();
 		TransformerFactory transformerFactory = TransformerFactory.newInstance();
 		Transformer transformer = transformerFactory.newTransformer();
 		DOMSource mergedDom = new DOMSource(mergedDoc);
 
-		Node mergedNode = xmlTools.merge(xml3.getDocumentElement(), xml4.getDocumentElement());
+		Node mergedNode = xmlTools.mergeDeep(xml1b.getDocumentElement(), xml2b.getDocumentElement());
 		TransformerFactory transformerFactory2 = TransformerFactory.newInstance();
 		Transformer transformer2 = transformerFactory2.newTransformer();
 		DOMSource mergedDom2 = new DOMSource(mergedNode);
@@ -100,6 +100,38 @@ class XmlToolsTest {
 		transformer.transform(mergedDom, streamResult1);
 		transformer2.transform(mergedDom2, streamResult2);
 
+		assertEquals(writer1.toString(), writer2.toString());
+	}
+	
+	@Test
+	void testMerge34() throws TransformerException, SAXException, IOException, ParserConfigurationException {
+		Document xml3 = xmlTools.parse(DIR_PATH + "xml3.xml");
+		Document xml4 = xmlTools.parse(DIR_PATH + "xml4.xml");
+		Document merged34 = xmlTools.parse(DIR_PATH + "merged34.xml");
+		
+		Element mergedDoc = merged34.getDocumentElement();
+		TransformerFactory transformerFactory = TransformerFactory.newInstance();
+		Transformer transformer = transformerFactory.newTransformer();
+		DOMSource mergedDom = new DOMSource(mergedDoc);
+		
+		Node mergedNode = xmlTools.merge(xml3.getDocumentElement(), xml4.getDocumentElement());
+		TransformerFactory transformerFactory2 = TransformerFactory.newInstance();
+		Transformer transformer2 = transformerFactory2.newTransformer();
+		DOMSource mergedDom2 = new DOMSource(mergedNode);
+		
+		StringWriter writer1 = new StringWriter();
+		StreamResult streamResult1 = new StreamResult(writer1);
+		StringWriter writer2 = new StringWriter();
+		StreamResult streamResult2 = new StreamResult(writer2);
+		
+		// If you use
+		// StreamResult result = new StreamResult(System.out);
+		// the output will be pushed to the standard output ...
+		// You can use that for debugging
+		
+		transformer.transform(mergedDom, streamResult1);
+		transformer2.transform(mergedDom2, streamResult2);
+		
 		assertEquals(writer1.toString(), writer2.toString());
 	}
 
@@ -179,6 +211,38 @@ class XmlToolsTest {
 		DOMSource mergedDom = new DOMSource(mergedDoc);
 
 		Node mergedNode = xmlTools.merge(xml7.getDocumentElement(), xml8.getDocumentElement());
+		TransformerFactory transformerFactory2 = TransformerFactory.newInstance();
+		Transformer transformer2 = transformerFactory2.newTransformer();
+		DOMSource mergedDom2 = new DOMSource(mergedNode);
+
+		StringWriter writer1 = new StringWriter();
+		StreamResult streamResult1 = new StreamResult(writer1);
+		StringWriter writer2 = new StringWriter();
+		StreamResult streamResult2 = new StreamResult(writer2);
+
+		// If you use
+		// StreamResult result = new StreamResult(System.out);
+		// the output will be pushed to the standard output ...
+		// You can use that for debugging
+
+		transformer.transform(mergedDom, streamResult1);
+		transformer2.transform(mergedDom2, streamResult2);
+
+		assertEquals(writer1.toString(), writer2.toString());
+	}
+
+	@Test
+	void testMerge7b8b() throws TransformerException, SAXException, IOException, ParserConfigurationException {
+		Document xml7b = xmlTools.parse(DIR_PATH + "xml7b.xml");
+		Document xml8b = xmlTools.parse(DIR_PATH + "xml8b.xml");
+		Document merged7b8b = xmlTools.parse(DIR_PATH + "merged7b8b.xml");
+
+		Element mergedDoc = merged7b8b.getDocumentElement();
+		TransformerFactory transformerFactory = TransformerFactory.newInstance();
+		Transformer transformer = transformerFactory.newTransformer();
+		DOMSource mergedDom = new DOMSource(mergedDoc);
+
+		Node mergedNode = xmlTools.mergeDeep(xml7b.getDocumentElement(), xml8b.getDocumentElement());
 		TransformerFactory transformerFactory2 = TransformerFactory.newInstance();
 		Transformer transformer2 = transformerFactory2.newTransformer();
 		DOMSource mergedDom2 = new DOMSource(mergedNode);

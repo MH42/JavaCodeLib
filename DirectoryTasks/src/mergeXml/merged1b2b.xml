@@ -1,0 +1,18 @@
+<?xml version="1.0"?>
+
+<root>
+	<Employees>
+		<Employee id="1">
+			<name>Pankaj</name>
+			<age>30</age>
+			<role>Java Developer</role>
+			<gender>Male</gender>
+		</Employee>
+		<Employee id="2">
+			<name>Lisa</name>
+			<age>35</age>
+			<role>CSS Developer</role>
+			<gender>male</gender>
+		</Employee>
+	</Employees>
+</root>
